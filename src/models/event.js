@@ -25,7 +25,7 @@ const createEvent = (body) =>
       });
   });
 
-const getAllEvent = (body) =>
+const getAllEvents = (body) =>
   new Promise((resolve, reject) => {
     const { from, to } = pagination(body.page, body.limit);
     supabase
@@ -57,4 +57,4 @@ const getEventById = (id) =>
       });
   });
 
-module.exports = { createEvent, getAllEvent, getEventById };
+module.exports = { createEvent, getAllEvents, getEventById };

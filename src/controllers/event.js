@@ -10,9 +10,9 @@ const createEvent = async (req, res) => {
   }
 };
 
-const getAllEvent = async (req, res) => {
+const getAllEvents = async (req, res) => {
   try {
-    const result = await eventModel.getAllEvent(req.body);
+    const result = await eventModel.getAllEvents(req.body);
     if (result.data.length === 0) {
       return responseHandler(res, 404, "Data not found.", result.data);
     }
@@ -34,4 +34,8 @@ const getEventById = async (req, res) => {
   }
 };
 
-module.exports = { createEvent, getAllEvent, getEventById };
+module.exports = {
+  createEvent,
+  getAllEvents,
+  getEventById,
+};
