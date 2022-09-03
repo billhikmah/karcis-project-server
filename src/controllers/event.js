@@ -34,8 +34,20 @@ const getEventById = async (req, res) => {
   }
 };
 
+const searchEvents = async (req, res) => {
+  try {
+    const result = await eventModel.searchEvents(req.query);
+    if (result.data.length === 0) {
+      return responseHandler(res, 404, "Data not found.", result.data);
+    }
+    return responseHandler(res, result.status, result.statusText, result.data);
+  } catch (error) {
+    return responseHandler(res, error.status, error.error.message);
+  }
+};
 module.exports = {
   createEvent,
   getAllEvents,
   getEventById,
+  searchEvents,
 };

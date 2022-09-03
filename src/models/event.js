@@ -28,9 +28,11 @@ const createEvent = (body) =>
 const getAllEvents = (body) =>
   new Promise((resolve, reject) => {
     const { from, to } = pagination(body.page, body.limit);
+    const date = new Date();
     supabase
       .from("event")
       .select("*")
+      .gt("date_time_show", date.toISOString())
       .order("date_time_show", { ascending: true })
       .range(from, to)
       .then((result) => {
@@ -57,4 +59,31 @@ const getEventById = (id) =>
       });
   });
 
-module.exports = { createEvent, getAllEvents, getEventById };
+const searchEvents = (data) =>
+  new Promise((resolve, reject) => {
+    const { page = 1, limit = 5, key, sort = "name", order = "true" } = data;
+    const { from, to } = pagination(page, limit);
+    const date = new Date();
+    let query = supabase
+      .from("event")
+      .select("*")
+      .ilike("name", `%${key}%`)
+      .gt("date_time_show", date.toISOString());
+
+    if (sort === "name") {
+      query = query.order("name", { ascending: JSON.parse(order) });
+    }
+    if (sort === "date") {
+      query = query.order("date_time_show", { ascending: JSON.parse(order) });
+    }
+
+    query.range(from, to).then((result) => {
+      if (!result.error) {
+        resolve(result);
+      } else {
+        reject(result);
+      }
+    });
+  });
+
+module.exports = { createEvent, getAllEvents, getEventById, searchEvents };
