@@ -7,6 +7,7 @@ Router.post("/", eventController.createEvent);
 Router.get("/search", eventController.searchEvents);
 Router.get("/", eventController.getAllEvents);
 Router.get("/:id", eventController.getEventById);
-Router.patch("/:id", eventController.updateEvents);
+Router.patch("/:id", eventController.updateEvent);
+Router.delete("/:id", eventController.deleteEvent);
 
 module.exports = Router;

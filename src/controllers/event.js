@@ -46,13 +46,29 @@ const searchEvents = async (req, res) => {
   }
 };
 
-const updateEvents = async (req, res) => {
+const updateEvent = async (req, res) => {
   try {
-    const result = await eventModel.updateEvents(req.body, req.params);
-    if (result.data.length === 0) {
-      return responseHandler(res, 404, "Data not found.", result.data);
-    }
-    return responseHandler(res, result.status, result.statusText, result.data);
+    const result = await eventModel.updateEvent(req.body, req.params);
+    return responseHandler(
+      res,
+      result.status,
+      "Event has been updated.",
+      result.data
+    );
+  } catch (error) {
+    return responseHandler(res, error.status, error.error.message);
+  }
+};
+
+const deleteEvent = async (req, res) => {
+  try {
+    const result = await eventModel.deleteEvent(req.params);
+    return responseHandler(
+      res,
+      result.status,
+      "Event has been deleted",
+      result.data
+    );
   } catch (error) {
     return responseHandler(res, error.status, error.error.message);
   }
@@ -63,5 +79,6 @@ module.exports = {
   getAllEvents,
   getEventById,
   searchEvents,
-  updateEvents,
+  updateEvent,
+  deleteEvent,
 };

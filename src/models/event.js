@@ -86,7 +86,7 @@ const searchEvents = (data) =>
     });
   });
 
-const updateEvents = (body, params) =>
+const updateEvent = (body, params) =>
   new Promise((resolve, reject) => {
     const { name, category, location, date_time_show, detail, price } = body;
     const { id } = params;
@@ -103,10 +103,26 @@ const updateEvents = (body, params) =>
       });
   });
 
+const deleteEvent = ({ id }) =>
+  new Promise((resolve, reject) => {
+    supabase
+      .from("event")
+      .delete()
+      .match({ id })
+      .then((result) => {
+        if (!result.error) {
+          resolve(result);
+        } else {
+          reject(result);
+        }
+      });
+  });
+
 module.exports = {
   createEvent,
   getAllEvents,
   getEventById,
   searchEvents,
-  updateEvents,
+  updateEvent,
+  deleteEvent,
 };
