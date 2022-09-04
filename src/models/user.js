@@ -113,4 +113,5 @@ const updateUser = (body, params) =>
         }
       });
   });
+
 module.exports = { createUser, getAllUser, getUserById, updateUser };
