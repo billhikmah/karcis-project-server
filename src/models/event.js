@@ -86,4 +86,27 @@ const searchEvents = (data) =>
     });
   });
 
-module.exports = { createEvent, getAllEvents, getEventById, searchEvents };
+const updateEvents = (body, params) =>
+  new Promise((resolve, reject) => {
+    const { name, category, location, date_time_show, detail, price } = body;
+    const { id } = params;
+    supabase
+      .from("event")
+      .update({ name, category, location, date_time_show, detail, price })
+      .eq("id", id)
+      .then((result) => {
+        if (!result.error) {
+          resolve(result);
+        } else {
+          reject(result);
+        }
+      });
+  });
+
+module.exports = {
+  createEvent,
+  getAllEvents,
+  getEventById,
+  searchEvents,
+  updateEvents,
+};
