@@ -34,4 +34,13 @@ const getUserById = async (req, res) => {
   }
 };
 
-module.exports = { createUser, getAllUser, getUserById };
+const updateUser = async (req, res) => {
+  try {
+    const result = await userModel.updateUser(req.body, req.params);
+    responseHandler(res, result.status, result.statusText, result.data);
+  } catch (error) {
+    responseHandler(res, error.status, error.error.message);
+  }
+};
+
+module.exports = { createUser, getAllUser, getUserById, updateUser };

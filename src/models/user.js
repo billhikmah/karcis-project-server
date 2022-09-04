@@ -77,4 +77,40 @@ const getUserById = (id) =>
       });
   });
 
-module.exports = { createUser, getAllUser, getUserById };
+const updateUser = (body, params) =>
+  new Promise((resolve, reject) => {
+    const {
+      name,
+      username,
+      gender,
+      profession,
+      nationality,
+      date_of_birth,
+      email,
+      password,
+    } = body;
+    const { id } = params;
+    supabase
+      .from("user")
+      .update([
+        {
+          name,
+          username,
+          gender,
+          profession,
+          nationality,
+          date_of_birth,
+          email,
+          password,
+        },
+      ])
+      .match({ id })
+      .then((result) => {
+        if (!result.error) {
+          resolve(result);
+        } else {
+          reject(result);
+        }
+      });
+  });
+module.exports = { createUser, getAllUser, getUserById, updateUser };
