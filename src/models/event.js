@@ -25,13 +25,13 @@ const createEvent = (body) =>
       });
   });
 
-const getAllEvents = (body) =>
+const getAllEvents = (query) =>
   new Promise((resolve, reject) => {
-    const { from, to } = pagination(body.page, body.limit);
+    const { from, to } = pagination(query.page, query.limit);
     const date = new Date();
     supabase
-      .from("event")
-      .select("*")
+      .from("view_event")
+      .select("*", { count: "exact" })
       .gt("date_time_show", date.toISOString())
       .order("date_time_show", { ascending: true })
       .range(from, to)
@@ -47,7 +47,7 @@ const getAllEvents = (body) =>
 const getEventById = (id) =>
   new Promise((resolve, reject) => {
     supabase
-      .from("event")
+      .from("view_event")
       .select("*")
       .eq("id", id)
       .then((result) => {
@@ -65,8 +65,8 @@ const searchEvents = (data) =>
     const { from, to } = pagination(page, limit);
     const date = new Date();
     let query = supabase
-      .from("event")
-      .select("*")
+      .from("view_event")
+      .select("*", { count: "exact" })
       .ilike("name", `%${key}%`)
       .gt("date_time_show", date.toISOString());
 

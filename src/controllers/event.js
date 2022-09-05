@@ -12,11 +12,23 @@ const createEvent = async (req, res) => {
 
 const getAllEvents = async (req, res) => {
   try {
-    const result = await eventModel.getAllEvents(req.body);
+    const result = await eventModel.getAllEvents(req.query);
     if (result.data.length === 0) {
       return responseHandler(res, 404, "Data not found.", result.data);
     }
-    return responseHandler(res, result.status, result.statusText, result.data);
+    const pagination = {
+      page: +req.query.page,
+      limit: +req.query.limit,
+      totalData: result.count,
+      totalPage: Math.ceil(result.count / req.query.limit),
+    };
+    return responseHandler(
+      res,
+      result.status,
+      result.statusText,
+      result.data,
+      pagination
+    );
   } catch (error) {
     return responseHandler(res, error.status, error.error.message);
   }
@@ -40,7 +52,21 @@ const searchEvents = async (req, res) => {
     if (result.data.length === 0) {
       return responseHandler(res, 404, "Data not found.", result.data);
     }
-    return responseHandler(res, result.status, result.statusText, result.data);
+
+    const pagination = {
+      page: +req.query.page,
+      limit: +req.query.limit,
+      totalData: result.count,
+      totalPage: Math.ceil(result.count / req.query.limit),
+    };
+
+    return responseHandler(
+      res,
+      result.status,
+      result.statusText,
+      result.data,
+      pagination
+    );
   } catch (error) {
     return responseHandler(res, error.status, error.error.message);
   }
@@ -63,6 +89,9 @@ const updateEvent = async (req, res) => {
 const deleteEvent = async (req, res) => {
   try {
     const result = await eventModel.deleteEvent(req.params);
+    if (result.data.length === 0) {
+      return responseHandler(res, result.status, "Id not found", result.data);
+    }
     return responseHandler(
       res,
       result.status,
