@@ -4,9 +4,9 @@ const responseHandler = require("../utils/responseHandler");
 const createUser = async (req, res) => {
   try {
     const result = await userModel.createUser(req.body);
-    responseHandler(res, result.status, result.statusText, result.data);
+    return responseHandler(res, result.status, result.statusText, result.data);
   } catch (error) {
-    responseHandler(res, error.status, error.error.message);
+    return responseHandler(res, error.status, error.error.message);
   }
 };
 
@@ -49,9 +49,9 @@ const getUserById = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const result = await userModel.updateUser(req.body, req.params);
-    responseHandler(res, result.status, result.statusText, result.data);
+    return responseHandler(res, result.status, result.statusText, result.data);
   } catch (error) {
-    responseHandler(res, error.status, error.error.message);
+    return responseHandler(res, error.status, error.error.message);
   }
 };
 
