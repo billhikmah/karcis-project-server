@@ -30,8 +30,11 @@ const getAllEvents = (query) =>
     const { from, to } = pagination(query.page, query.limit);
     const date = new Date();
     supabase
-      .from("view_event")
-      .select("*", { count: "exact" })
+      .from("event")
+      .select(
+        `id, name, detail, date_time_show, price, category(name), location(name), image, updated_at, created_at`,
+        { count: "exact" }
+      )
       .gt("date_time_show", date.toISOString())
       .order("date_time_show", { ascending: true })
       .range(from, to)
@@ -47,8 +50,10 @@ const getAllEvents = (query) =>
 const getEventById = (id) =>
   new Promise((resolve, reject) => {
     supabase
-      .from("view_event")
-      .select("*")
+      .from("event")
+      .select(
+        "id, name, detail, date_time_show, price, category(name), location(name), image, updated_at, created_at"
+      )
       .eq("id", id)
       .then((result) => {
         if (!result.error) {
@@ -65,8 +70,11 @@ const searchEvents = (data) =>
     const { from, to } = pagination(page, limit);
     const date = new Date();
     let query = supabase
-      .from("view_event")
-      .select("*", { count: "exact" })
+      .from("event")
+      .select(
+        "id, name, detail, date_time_show, price, category(name), location(name), image, updated_at, created_at",
+        { count: "exact" }
+      )
       .ilike("name", `%${key}%`)
       .gt("date_time_show", date.toISOString());
 
