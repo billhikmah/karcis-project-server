@@ -45,12 +45,15 @@ const createUser = (body) =>
       });
   });
 
-const getAllUser = (body) =>
+const getAllUser = (query) =>
   new Promise((resolve, reject) => {
-    const { from, to } = pagination(body.page, body.limit);
+    const { from, to } = pagination(query.page, query.limit);
     supabase
       .from("user")
-      .select("*")
+      .select(
+        `id, name, username, email, date_of_birth, gender(name), profession(name), nationality(name), created_at, updated_at`,
+        { count: "exact" }
+      )
       .order("name", { ascending: true })
       .range(from, to)
       .then((result) => {
@@ -66,7 +69,9 @@ const getUserById = (id) =>
   new Promise((resolve, reject) => {
     supabase
       .from("user")
-      .select("*")
+      .select(
+        `id, name, username, email, date_of_birth, gender(name), profession(name), nationality(name), created_at, updated_at`
+      )
       .eq("id", id)
       .then((result) => {
         if (!result.error) {
@@ -86,10 +91,10 @@ const updateUser = (body, params) =>
       profession,
       nationality,
       date_of_birth,
-      email,
       password,
     } = body;
     const { id } = params;
+    const updated_at = new Date();
     supabase
       .from("user")
       .update([
@@ -100,8 +105,8 @@ const updateUser = (body, params) =>
           profession,
           nationality,
           date_of_birth,
-          email,
           password,
+          updated_at,
         },
       ])
       .match({ id })

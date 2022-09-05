@@ -10,30 +10,6 @@ const createEvent = async (req, res) => {
   }
 };
 
-const getAllEvents = async (req, res) => {
-  try {
-    const result = await eventModel.getAllEvents(req.query);
-    if (result.data.length === 0) {
-      return responseHandler(res, 404, "Data not found.", result.data);
-    }
-    const pagination = {
-      page: +req.query.page,
-      limit: +req.query.limit,
-      totalData: result.count,
-      totalPage: Math.ceil(result.count / req.query.limit),
-    };
-    return responseHandler(
-      res,
-      result.status,
-      result.statusText,
-      result.data,
-      pagination
-    );
-  } catch (error) {
-    return responseHandler(res, error.status, error.error.message);
-  }
-};
-
 const getEventById = async (req, res) => {
   try {
     const result = await eventModel.getEventById(req.params.id);
@@ -46,9 +22,9 @@ const getEventById = async (req, res) => {
   }
 };
 
-const searchEvents = async (req, res) => {
+const getAllEvents = async (req, res) => {
   try {
-    const result = await eventModel.searchEvents(req.query);
+    const result = await eventModel.getAllEvents(req.query);
     if (result.data.length === 0) {
       return responseHandler(res, 404, "Data not found.", result.data);
     }
@@ -107,7 +83,6 @@ module.exports = {
   createEvent,
   getAllEvents,
   getEventById,
-  searchEvents,
   updateEvent,
   deleteEvent,
 };

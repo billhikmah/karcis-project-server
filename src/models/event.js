@@ -25,28 +25,6 @@ const createEvent = (body) =>
       });
   });
 
-const getAllEvents = (query) =>
-  new Promise((resolve, reject) => {
-    const { from, to } = pagination(query.page, query.limit);
-    const date = new Date();
-    supabase
-      .from("event")
-      .select(
-        `id, name, detail, date_time_show, price, category(name), location(name), image, updated_at, created_at`,
-        { count: "exact" }
-      )
-      .gt("date_time_show", date.toISOString())
-      .order("date_time_show", { ascending: true })
-      .range(from, to)
-      .then((result) => {
-        if (!result.error) {
-          resolve(result);
-        } else {
-          reject(result);
-        }
-      });
-  });
-
 const getEventById = (id) =>
   new Promise((resolve, reject) => {
     supabase
@@ -64,7 +42,7 @@ const getEventById = (id) =>
       });
   });
 
-const searchEvents = (data) =>
+const getAllEvents = (data) =>
   new Promise((resolve, reject) => {
     const { page = 1, limit = 5, key, sort = "name", order = "true" } = data;
     const { from, to } = pagination(page, limit);
@@ -98,9 +76,18 @@ const updateEvent = (body, params) =>
   new Promise((resolve, reject) => {
     const { name, category, location, date_time_show, detail, price } = body;
     const { id } = params;
+    const updated_at = new Date();
     supabase
       .from("event")
-      .update({ name, category, location, date_time_show, detail, price })
+      .update({
+        name,
+        category,
+        location,
+        date_time_show,
+        detail,
+        price,
+        updated_at,
+      })
       .eq("id", id)
       .then((result) => {
         if (!result.error) {
@@ -130,7 +117,6 @@ module.exports = {
   createEvent,
   getAllEvents,
   getEventById,
-  searchEvents,
   updateEvent,
   deleteEvent,
 };

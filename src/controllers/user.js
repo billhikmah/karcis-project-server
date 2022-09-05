@@ -12,11 +12,23 @@ const createUser = async (req, res) => {
 
 const getAllUser = async (req, res) => {
   try {
-    const result = await userModel.getAllUser(req.body);
+    const result = await userModel.getAllUser(req.query);
     if (result.data.length === 0) {
       return responseHandler(res, 404, "Data not found.", result.data);
     }
-    return responseHandler(res, result.status, result.statusText, result.data);
+    const pagination = {
+      page: +req.query.page,
+      limit: +req.query.limit,
+      totalData: result.count,
+      totalPage: Math.ceil(result.count / req.query.limit),
+    };
+    return responseHandler(
+      res,
+      result.status,
+      result.statusText,
+      result.data,
+      pagination
+    );
   } catch (error) {
     return responseHandler(res, error.status, error.error.message);
   }
