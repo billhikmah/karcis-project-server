@@ -6,9 +6,10 @@ const xss = require("xss-clean");
 const compression = require("compression");
 const bodyParser = require("body-parser");
 const mainRouter = require("./src/routes/index");
+require("dotenv").config();
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT;
 
 app.use(cors());
 app.use(morgan("dev"));
