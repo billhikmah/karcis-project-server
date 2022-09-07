@@ -29,9 +29,7 @@ const getEventById = (id) =>
   new Promise((resolve, reject) => {
     supabase
       .from("event")
-      .select(
-        "id, name, detail, date_time_show, price, category(name), location(name), image, updated_at, created_at"
-      )
+      .select("*, category(name), location(name)")
       .eq("id", id)
       .then((result) => {
         if (!result.error) {
@@ -49,10 +47,7 @@ const getAllEvents = (data) =>
     const date = new Date();
     let query = supabase
       .from("event")
-      .select(
-        "id, name, detail, date_time_show, price, category(name), location(name), image, updated_at, created_at",
-        { count: "exact" }
-      )
+      .select("*, category(name), location(name)", { count: "exact" })
       .ilike("name", `%${key}%`)
       .gt("date_time_show", date.toISOString());
 

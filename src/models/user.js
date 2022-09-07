@@ -50,10 +50,9 @@ const getAllUser = (query) =>
     const { from, to } = pagination(query.page, query.limit);
     supabase
       .from("user")
-      .select(
-        `id, name, username, email, date_of_birth, gender(name), profession(name), nationality(name), created_at, updated_at`,
-        { count: "exact" }
-      )
+      .select(`*, gender(name), profession(name), nationality(name)`, {
+        count: "exact",
+      })
       .order("name", { ascending: true })
       .range(from, to)
       .then((result) => {
@@ -69,9 +68,7 @@ const getUserById = (id) =>
   new Promise((resolve, reject) => {
     supabase
       .from("user")
-      .select(
-        `id, name, username, email, date_of_birth, gender(name), profession(name), nationality(name), created_at, updated_at`
-      )
+      .select(`*, gender(name), profession(name), nationality(name)`)
       .eq("id", id)
       .then((result) => {
         if (!result.error) {

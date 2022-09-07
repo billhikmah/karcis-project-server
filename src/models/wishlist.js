@@ -35,12 +35,9 @@ const getAllWishList = (query, { user_id }) =>
     const { from, to } = pagination(query.page, query.limit);
     supabase
       .from("wishlist")
-      .select(
-        `id, user_id(id, name), event_id(id, name), created_at, updated_at`,
-        {
-          count: "exact",
-        }
-      )
+      .select(`*, user_id(id, name), event_id(id, name)`, {
+        count: "exact",
+      })
       .match({ user_id })
       .order("created_at", { ascending: false })
       .range(from, to)
@@ -57,9 +54,7 @@ const getWishlistById = ({ id }) =>
   new Promise((resolve, reject) => {
     supabase
       .from("wishlist")
-      .select(
-        `id, user_id(id, name), event_id(id, name), created_at, updated_at`
-      )
+      .select(`*, user_id(id, name), event_id(id, name)`)
       .eq("id", id)
       .then((result) => {
         if (!result.error) {
@@ -84,6 +79,7 @@ const deleteWishlist = ({ id }) =>
         }
       });
   });
+
 module.exports = {
   createWishlist,
   getAllWishList,
