@@ -58,7 +58,11 @@ const updateEvent = async (req, res) => {
       result.data
     );
   } catch (error) {
-    return responseHandler(res, error.status, error.error.message);
+    return responseHandler(
+      res,
+      error.status,
+      error.statusText || error.error.message
+    );
   }
 };
 

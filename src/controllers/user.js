@@ -38,7 +38,7 @@ const getUserById = async (req, res) => {
   try {
     const result = await userModel.getUserById(req.params.id);
     if (result.data.length === 0) {
-      return responseHandler(res, 404, "Data not found.", result.data);
+      return responseHandler(res, 404, "Id not found.", result.data);
     }
     return responseHandler(res, result.status, result.statusText, result.data);
   } catch (error) {
@@ -51,7 +51,11 @@ const updateUser = async (req, res) => {
     const result = await userModel.updateUser(req.body, req.params);
     return responseHandler(res, result.status, result.statusText, result.data);
   } catch (error) {
-    return responseHandler(res, error.status, error.error.message);
+    return responseHandler(
+      res,
+      error.status,
+      error.statusText || error.error.message
+    );
   }
 };
 
