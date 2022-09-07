@@ -54,7 +54,7 @@ const updateUser = async (req, res) => {
     return responseHandler(
       res,
       error.status,
-      error.statusText || error.error.message
+      error.error.message || error.statusText
     );
   }
 };
