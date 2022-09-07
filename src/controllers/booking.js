@@ -28,6 +28,9 @@ const createBooking = async (req, res) => {
 const getBookingByUserId = async (req, res) => {
   try {
     const result = await bookingModel.getBookingByUserId(req.params.user_id);
+    if (result.data.length === 0) {
+      return responseHandler(res, 404, "Data not found.", result.data);
+    }
     return responseHandler(res, result.status, result.statusText, result.data);
   } catch (error) {
     return responseHandler(res, error.status, error.error.message);
