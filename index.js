@@ -10,8 +10,13 @@ require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT;
+const corsOptions = {
+  origin: [`http://localhost:${port}`],
+  methods: ["GET", "POST", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization", "x-access-token"],
+};
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(helmet()); // Mengamankan Header
 app.use(xss());
