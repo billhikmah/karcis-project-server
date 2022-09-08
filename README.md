@@ -59,10 +59,16 @@ In addition to using the Express.js framework, this frontend is also supported b
 7. [multer](https://www.npmjs.com/package/multer)
 8. [eslint](https://www.npmjs.com/package/eslint)
 
-<h2>Related Documentation</h2>
+<h2>Appliaction Flow</h2>
+<div style="display:flex; justify-content:center; margin-bottom:40px;">
+    <img src="public/images/Application_Flow.png" width=400;>
+</div>
 
 1. Client (Frontend)<br>
    Client documentation can be accessed via [Netlify]() or [Github Repository]().
 
 2. HTML & CSS (Frontend)<br>
    The client side also has been documented with HTML & CSS and deployed on [Netlify](=).
+
+3. Postman<br>
+   The API has been documented with on [Postman](https://documenter.getpostman.com/view/20723287/VV51tET9).
