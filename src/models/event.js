@@ -42,7 +42,13 @@ const getEventById = (id) =>
 
 const getAllEvents = (data) =>
   new Promise((resolve, reject) => {
-    const { page = 1, limit = 5, key, sort = "name", order = "true" } = data;
+    const {
+      page = 1,
+      limit = 5,
+      key = "",
+      sort = "name",
+      order = "true",
+    } = data;
     const { from, to } = pagination(page, limit);
     const date = new Date();
     let query = supabase
