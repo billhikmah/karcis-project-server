@@ -10,9 +10,10 @@ const pagination = (inputPage, inputLimit) => {
   return { from, to };
 };
 
-const createWishlist = (body) =>
+const createWishlist = (body, payload) =>
   new Promise((resolve, reject) => {
-    const { event_id, user_id } = body;
+    const { event_id } = body;
+    const { user_id } = payload;
     supabase
       .from("wishlist")
       .insert([
