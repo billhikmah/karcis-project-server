@@ -3,7 +3,7 @@ const responseHandler = require("../utils/responseHandler");
 
 const createWishlist = async (req, res) => {
   try {
-    const result = await wishlistModel.createWishlist(req.body);
+    const result = await wishlistModel.createWishlist(req.body, req.payload);
     return responseHandler(res, result.status, result.statusText, result.data);
   } catch (error) {
     return responseHandler(res, error.status, error.error.message);
