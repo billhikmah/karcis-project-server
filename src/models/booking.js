@@ -1,9 +1,9 @@
 /* eslint-disable camelcase */
 const supabase = require("../config/supabase");
 
-const createBooking = (params, body) =>
+const createBooking = (payload, body) =>
   new Promise((resolve, reject) => {
-    const { user_id } = params;
+    const { user_id } = payload;
     const { event_id, total_payment, payment_method, payment_status, section } =
       body;
     const total_ticket = section.length;
