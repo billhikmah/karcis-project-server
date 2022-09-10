@@ -4,7 +4,7 @@ const responseHandler = require("../utils/responseHandler");
 
 const createBooking = async (req, res) => {
   try {
-    const result = await bookingModel.createBooking(req.params, req.body);
+    const result = await bookingModel.createBooking(req.payload, req.body);
     const booking_id = result.data[0].id;
     const { section } = req.body;
     const createBookingSections = await Promise.all(
@@ -19,7 +19,12 @@ const createBooking = async (req, res) => {
     );
 
     const data = { ...result.data[0], section: createBookingSections };
-    return responseHandler(res, result.status, result.statusText, data);
+    return responseHandler(
+      res,
+      result.status,
+      "Booking and booking section have been created.",
+      data
+    );
   } catch (error) {
     return responseHandler(res, error.status, error.error.message);
   }
@@ -27,9 +32,9 @@ const createBooking = async (req, res) => {
 
 const getBookingByUserId = async (req, res) => {
   try {
-    const result = await bookingModel.getBookingByUserId(req.params.user_id);
+    const result = await bookingModel.getBookingByUserId(req.payload.user_id);
     if (result.data.length === 0) {
-      return responseHandler(res, 404, "Data not found.", result.data);
+      return responseHandler(res, 404, "Booking not found.", result.data);
     }
     return responseHandler(res, result.status, result.statusText, result.data);
   } catch (error) {
