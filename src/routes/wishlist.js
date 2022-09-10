@@ -9,8 +9,20 @@ Router.post(
   authMiddleware.authentication,
   wishlistController.createWishlist
 );
-Router.get("/:user_id", wishlistController.getAllWishList);
-Router.get("/id/:id", wishlistController.getWishlistById);
-Router.delete("/:id", wishlistController.deleteWishlist);
+Router.get(
+  "/",
+  authMiddleware.authentication,
+  wishlistController.getAllWishList
+);
+Router.get(
+  "/:id",
+  authMiddleware.authentication,
+  wishlistController.getWishlistById
+);
+Router.delete(
+  "/:id",
+  authMiddleware.authentication,
+  wishlistController.deleteWishlist
+);
 
 module.exports = Router;
