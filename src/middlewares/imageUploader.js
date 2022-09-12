@@ -5,9 +5,6 @@ const responseHandler = require("../utils/responseHandler");
 const cloudinary = require("../config/cloudinary");
 
 const uploadEventImage = (req, res, next) => {
-  if (!req.file) {
-    next();
-  }
   const storage = new CloudinaryStorage({
     cloudinary,
     params: {
