@@ -36,7 +36,7 @@ const getAllUser = async (req, res) => {
 
 const getUserById = async (req, res) => {
   try {
-    const result = await userModel.getUserById(req.params.id);
+    const result = await userModel.getUserById(req.payload.user_id);
     if (result.data.length === 0) {
       return responseHandler(res, 404, "Id not found.", result.data);
     }
@@ -48,7 +48,9 @@ const getUserById = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const result = await userModel.updateUser(req.body, req.params);
+    console.log(req.payload);
+    const image = req.file ? req.file.filename : undefined;
+    const result = await userModel.updateUser(req.body, req.payload, image);
     return responseHandler(res, result.status, result.statusText, result.data);
   } catch (error) {
     return responseHandler(
