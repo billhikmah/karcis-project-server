@@ -3,9 +3,12 @@ const responseHandler = require("../utils/responseHandler");
 
 const createEvent = async (req, res) => {
   try {
-    const result = await eventModel.createEvent(req.body);
+    const image = req.file ? req.file.filename : null;
+    // console.log(req.body);
+    const result = await eventModel.createEvent(req.body, image);
     responseHandler(res, result.status, "Event has been created", result.data);
   } catch (error) {
+    // console.log(error);
     responseHandler(res, error.status, error.error.message);
   }
 };
