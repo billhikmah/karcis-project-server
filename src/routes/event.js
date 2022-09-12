@@ -19,8 +19,8 @@ Router.patch(
   "/:id",
   authMiddleware.authentication,
   authMiddleware.adminAuthorization,
-  imageDestroyer.updateEventImage,
   imageUploader.uploadEventImage,
+  imageDestroyer.updateEventImage,
   eventController.updateEvent
 );
 Router.delete(
