@@ -1,4 +1,6 @@
+const bcrypt = require("bcrypt");
 const userModel = require("../models/user");
+const authModel = require("../models/auth");
 const responseHandler = require("../utils/responseHandler");
 
 const createUser = async (req, res) => {
@@ -48,7 +50,6 @@ const getUserById = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    console.log(req.payload);
     const image = req.file ? req.file.filename : undefined;
     const result = await userModel.updateUser(req.body, req.payload, image);
     return responseHandler(res, result.status, result.statusText, result.data);
@@ -61,4 +62,42 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { createUser, getAllUser, getUserById, updateUser };
+const updatePassword = async (req, res) => {
+  try {
+    const { password, newPassword } = req.body;
+    const checkEmail = await userModel.getUserById(req.payload.user_id);
+    const getHashPassword = await authModel.getUserByEmail(
+      checkEmail.data[0].email
+    );
+    const hashPassword = getHashPassword.data[0].password;
+    const checkPassword = await bcrypt.compare(password, hashPassword);
+    if (!checkPassword) {
+      return responseHandler(res, 400, "Enter the correct password", null);
+    }
+    const newHashPassword = await bcrypt.hash(newPassword, 10);
+    const result = await userModel.updatePassword(
+      newHashPassword,
+      req.payload.user_id
+    );
+    return responseHandler(
+      res,
+      result.status,
+      "Password has been changed",
+      result.data
+    );
+  } catch (error) {
+    return responseHandler(
+      res,
+      error.status,
+      error.error.message || error.statusText
+    );
+  }
+};
+
+module.exports = {
+  createUser,
+  getAllUser,
+  getUserById,
+  updateUser,
+  updatePassword,
+};
