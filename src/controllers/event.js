@@ -4,12 +4,15 @@ const responseHandler = require("../utils/responseHandler");
 const createEvent = async (req, res) => {
   try {
     const image = req.file ? req.file.filename : null;
-    // console.log(req.body);
     const result = await eventModel.createEvent(req.body, image);
-    responseHandler(res, result.status, "Event has been created", result.data);
+    return responseHandler(
+      res,
+      result.status,
+      "Event has been created",
+      result.data
+    );
   } catch (error) {
-    // console.log(error);
-    responseHandler(res, error.status, error.error.message);
+    return responseHandler(res, error.status, error.error.message);
   }
 };
 
@@ -53,7 +56,8 @@ const getAllEvents = async (req, res) => {
 
 const updateEvent = async (req, res) => {
   try {
-    const result = await eventModel.updateEvent(req.body, req.params);
+    const image = req.file ? req.file.filename : undefined;
+    const result = await eventModel.updateEvent(req.body, req.params, image);
     return responseHandler(
       res,
       result.status,
