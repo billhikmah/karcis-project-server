@@ -1,6 +1,7 @@
 const express = require("express");
 const eventController = require("../controllers/event");
 const authMiddleware = require("../middlewares/auth");
+const imageUploader = require("../middlewares/imageUploader");
 
 const Router = express.Router();
 
@@ -8,6 +9,7 @@ Router.post(
   "/",
   authMiddleware.authentication,
   authMiddleware.adminAuthorization,
+  imageUploader.uploadProduct,
   eventController.createEvent
 );
 Router.get("/", eventController.getAllEvents);
