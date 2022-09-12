@@ -79,7 +79,7 @@ const getUserById = (id) =>
       });
   });
 
-const updateUser = (body, params) =>
+const updateUser = (body, payload, image) =>
   new Promise((resolve, reject) => {
     const {
       name,
@@ -90,7 +90,7 @@ const updateUser = (body, params) =>
       date_of_birth,
       password,
     } = body;
-    const { id } = params;
+    const { user_id: id } = payload;
     const updated_at = new Date();
     supabase
       .from("user")
@@ -104,6 +104,7 @@ const updateUser = (body, params) =>
           date_of_birth,
           password,
           updated_at,
+          image,
         },
       ])
       .match({ id })
