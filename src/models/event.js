@@ -10,12 +10,14 @@ const pagination = (inputPage, inputLimit) => {
   return { from, to };
 };
 
-const createEvent = (body) =>
+const createEvent = (body, image) =>
   new Promise((resolve, reject) => {
     const { name, category, location, date_time_show, detail, price } = body;
     supabase
       .from("event")
-      .insert([{ name, category, location, detail, date_time_show, price }])
+      .insert([
+        { name, category, location, detail, date_time_show, price, image },
+      ])
       .then((result) => {
         if (!result.error) {
           resolve(result);
