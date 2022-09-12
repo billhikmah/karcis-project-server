@@ -25,5 +25,10 @@ Router.patch(
   imageDestroyer.updateUserImage,
   userController.updateUser
 );
+Router.patch(
+  "/update/password",
+  authMiddleware.authentication,
+  userController.updatePassword
+);
 
 module.exports = Router;
