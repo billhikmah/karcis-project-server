@@ -75,7 +75,7 @@ const getAllEvents = (data) =>
     });
   });
 
-const updateEvent = (body, params) =>
+const updateEvent = (body, params, image) =>
   new Promise((resolve, reject) => {
     const { name, category, location, date_time_show, detail, price } = body;
     const { id } = params;
@@ -90,6 +90,7 @@ const updateEvent = (body, params) =>
         detail,
         price,
         updated_at,
+        image,
       })
       .eq("id", id)
       .then((result) => {
