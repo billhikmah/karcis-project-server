@@ -81,15 +81,8 @@ const getUserById = (id) =>
 
 const updateUser = (body, payload, image) =>
   new Promise((resolve, reject) => {
-    const {
-      name,
-      username,
-      gender,
-      profession,
-      nationality,
-      date_of_birth,
-      password,
-    } = body;
+    const { name, username, gender, profession, nationality, date_of_birth } =
+      body;
     const { user_id: id } = payload;
     const updated_at = new Date();
     supabase
@@ -102,7 +95,6 @@ const updateUser = (body, payload, image) =>
           profession,
           nationality,
           date_of_birth,
-          password,
           updated_at,
           image,
         },
@@ -117,4 +109,30 @@ const updateUser = (body, payload, image) =>
       });
   });
 
-module.exports = { createUser, getAllUser, getUserById, updateUser };
+const updatePassword = (password, id) =>
+  new Promise((resolve, reject) => {
+    const updated_at = new Date();
+    supabase
+      .from("user")
+      .update([
+        {
+          password,
+          updated_at,
+        },
+      ])
+      .match({ id })
+      .then((result) => {
+        if (!result.error) {
+          resolve(result);
+        } else {
+          reject(result);
+        }
+      });
+  });
+module.exports = {
+  createUser,
+  getAllUser,
+  getUserById,
+  updateUser,
+  updatePassword,
+};
