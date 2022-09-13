@@ -47,18 +47,38 @@ const getAllEvents = (data) =>
     const {
       page = 1,
       limit = 5,
-      key = "",
+      key,
       sort = "name",
       order = "true",
+      date,
     } = data;
     const { from, to } = pagination(page, limit);
-    const date = new Date();
     let query = supabase
       .from("event")
-      .select("*, category(name), location(name)", { count: "exact" })
-      .ilike("name", `%${key}%`)
-      .gt("date_time_show", date.toISOString());
+      .select("*, category(name), location(name)", { count: "exact" });
 
+    // Filter by name
+    if (key) {
+      query = query.ilike(`"name"`, `%${key}%`);
+    }
+
+    // Only shows upcoming event
+    if (!date) {
+      const today = new Date();
+      query = query.gt("date_time_show", today.toISOString());
+    }
+
+    // Filter by date
+    if (date) {
+      const today = new Date(date);
+      const nextDay = new Date(new Date(today).setDate(today.getDate() + 1));
+
+      query = query
+        .gt("date_time_show", `${today.toISOString()}`)
+        .lt("date_time_show", `${nextDay.toISOString()}`);
+    }
+
+    // Sort
     if (sort === "name") {
       query = query.order("name", { ascending: JSON.parse(order) });
     }
