@@ -42,4 +42,22 @@ const getBookingByUserId = async (req, res) => {
   }
 };
 
-module.exports = { createBooking, getBookingByUserId };
+const getBookingSectionByEventId = async (req, res) => {
+  try {
+    const result = await bookingModel.getBookingSectionByEventId(
+      req.params.event_id
+    );
+    if (result.data.length === 0) {
+      return responseHandler(res, 404, "Booking not found.", result.data);
+    }
+    return responseHandler(res, result.status, result.statusText, result.data);
+  } catch (error) {
+    return responseHandler(res, error.status, error.error.message);
+  }
+};
+
+module.exports = {
+  createBooking,
+  getBookingByUserId,
+  getBookingSectionByEventId,
+};
