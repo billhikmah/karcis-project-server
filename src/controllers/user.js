@@ -64,13 +64,13 @@ const updateUser = async (req, res) => {
 
 const updatePassword = async (req, res) => {
   try {
-    const { password, newPassword } = req.body;
+    const { oldPassword, newPassword } = req.body;
     const checkEmail = await userModel.getUserById(req.payload.user_id);
     const getHashPassword = await authModel.getUserByEmail(
       checkEmail.data[0].email
     );
     const hashPassword = getHashPassword.data[0].password;
-    const checkPassword = await bcrypt.compare(password, hashPassword);
+    const checkPassword = await bcrypt.compare(oldPassword, hashPassword);
     if (!checkPassword) {
       return responseHandler(res, 400, "Enter the correct password", null);
     }
@@ -79,11 +79,16 @@ const updatePassword = async (req, res) => {
       newHashPassword,
       req.payload.user_id
     );
+    const data = {
+      id: result.data[0].id,
+      name: result.data[0].name,
+      updated_at: result.data[0].updated_at,
+    };
     return responseHandler(
       res,
       result.status,
       "Password has been changed",
-      result.data
+      data
     );
   } catch (error) {
     return responseHandler(
