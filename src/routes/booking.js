@@ -14,5 +14,6 @@ Router.get(
   authMiddleware.authentication,
   bookingController.getBookingByUserId
 );
+Router.get("/section/:event_id", bookingController.getBookingSectionByEventId);
 
 module.exports = Router;
