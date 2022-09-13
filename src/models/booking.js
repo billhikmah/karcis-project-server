@@ -63,8 +63,23 @@ const getBookingByUserId = (user_id) =>
       });
   });
 
+const getBookingSectionByEventId = (event_id) =>
+  new Promise((resolve, reject) => {
+    supabase
+      .from("booking")
+      .select(`*, booking_section(section)`)
+      .match({ event_id })
+      .then((result) => {
+        if (!result.error) {
+          resolve(result);
+        } else {
+          reject(result);
+        }
+      });
+  });
 module.exports = {
   createBooking,
   createBookingSection,
   getBookingByUserId,
+  getBookingSectionByEventId,
 };
