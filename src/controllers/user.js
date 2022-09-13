@@ -79,11 +79,16 @@ const updatePassword = async (req, res) => {
       newHashPassword,
       req.payload.user_id
     );
+    const data = {
+      id: result.data[0].id,
+      name: result.data[0].name,
+      updated_at: result.data[0].updated_at,
+    };
     return responseHandler(
       res,
       result.status,
       "Password has been changed",
-      result.data
+      data
     );
   } catch (error) {
     return responseHandler(
