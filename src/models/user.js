@@ -129,6 +129,7 @@ const updatePassword = (password, id) =>
         }
       });
   });
+
 module.exports = {
   createUser,
   getAllUser,
