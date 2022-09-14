@@ -6,6 +6,8 @@ const xss = require("xss-clean");
 const compression = require("compression");
 const bodyParser = require("body-parser");
 const mainRouter = require("./src/routes/index");
+const { redisConn } = require("./src/config/redis");
+
 require("dotenv").config();
 
 const app = express();
@@ -16,6 +18,7 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization", "x-access-token"],
 };
 
+redisConn();
 app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(helmet()); // Mengamankan Header
