@@ -38,6 +38,33 @@ $ npm run startDev
 
 5. Karcis Project App is Running
 
+<h2>Set up .env file</h2>
+
+Open .env file on your favorite code editor, and copy paste this code below :
+
+```
+MAIL_USERNAME = Your project email
+MAIL_PASSWORD = Your project email password
+OAUTH_CLIENTID = Your google oauth client id
+OAUTH_CLIENT_SECRET = Your google oauth client secret
+OAUTH_REFRESH_TOKEN = Your google oauth refresh token
+CLIENT_URL = https://localhost:3001/
+MAIL_SENDER = Your project email
+JWT_ISSUER = Your secret issuer
+JWT_PRIVATE_KEY = Your secret key
+SUPABASE_URL = Your supabase secret URL
+SUPABASE_KEY = Your supabase secret key
+PORT= 8080 or 3001
+CLOUDINARY_NAME = Your cloudinary name
+CLOUDINARY_API_KEY = Your cloudinary secret API key
+CLOUDINARY_API_SECRET = Your cloudinary API secret
+REDIS_PASSWORD = Your redis password
+REDIS_HOST = Your redis host
+REDIS_PORT = Your port
+REDIS_CLIENT_URL = redis://{your redis username}:{your redis password}@{your redis host}:{your redis port}/
+
+```
+
 <h2>Deploy</h2>
 
 This client side has been created with Express.js framework and deployed on [Example]()
@@ -64,11 +91,17 @@ In addition to using the Express.js framework, this frontend is also supported b
     <img src="public/images/Application_Flow.png" width=400;>
 </div>
 
-1. Client (Frontend)<br>
+<h2>Documentations</h2>
+
+<!-- 1. Client (Frontend)<br>
    Client documentation can be accessed via [Netlify]() or [Github Repository]().
 
 2. HTML & CSS (Frontend)<br>
-   The client side also has been documented with HTML & CSS and deployed on [Netlify](=).
+   The client side also has been documented with HTML & CSS and deployed on [Netlify](=). -->
 
-3. Postman<br>
+1. Postman<br>
    The API has been documented with on [Postman](https://documenter.getpostman.com/view/20723287/VV51tET9).
+
+```
+
+```
