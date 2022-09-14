@@ -10,5 +10,6 @@ Router.post(
   authController.signUp
 );
 Router.post("/login", authController.logIn);
+Router.delete("/", authController.logOut);
 
 module.exports = Router;
