@@ -10,7 +10,7 @@ const readFile = promisify(fs.readFile);
 const createToken = (id, email) => {
   const userPayload = { email, id };
   const jwtOptions = { issuer: process.env.JWT_ISSUER, expiresIn: "600s" };
-  const token = jwt.sign(userPayload, process.env.JWT_KEY, jwtOptions);
+  const token = jwt.sign(userPayload, process.env.JWT_PRIVATE_KEY, jwtOptions);
   return token;
 };
 
