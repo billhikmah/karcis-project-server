@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const authModel = require("../models/auth");
 const responseHandler = require("../utils/responseHandler");
+const { client } = require("../config/redis");
 // const { sendConfirmationEmail } = require("../config/nodemailer");
 
 const signUp = async (req, res) => {
@@ -45,8 +46,9 @@ const logIn = async (req, res) => {
       role: checkEmail.data[0].role,
     };
     const token = jwt.sign(payload, process.env.JWT_PRIVATE_KEY, {
-      expiresIn: "7d",
+      expiresIn: "1d",
     });
+
     return responseHandler(res, 200, "Login success.", {
       user_id: checkEmail.data[0].id,
       role: checkEmail.data[0].role,
@@ -57,4 +59,20 @@ const logIn = async (req, res) => {
   }
 };
 
-module.exports = { signUp, logIn };
+const logOut = async (req, res) => {
+  try {
+    const bearerToken = req.headers.authorization;
+    const token = bearerToken.split(" ")[1];
+    client.setEx(`blacklistToken:${token}`, 3600 * 24, token);
+    return responseHandler(res, 200, "Logout success.", null);
+  } catch (error) {
+    return responseHandler(
+      res,
+      error.status || 500,
+      "Internal Server Error",
+      null
+    );
+  }
+};
+
+module.exports = { signUp, logIn, logOut };
