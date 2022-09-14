@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const responseHandler = require("../utils/responseHandler");
 const authModel = require("../models/auth");
+const { client } = require("../config/redis");
 
 const checkRegisteredEmail = async (req, res, next) => {
   try {
@@ -19,7 +20,7 @@ const checkRegisteredEmail = async (req, res, next) => {
   }
 };
 
-const authentication = (req, res, next) => {
+const authentication = async (req, res, next) => {
   const bearerToken = req.headers.authorization;
   const token = bearerToken.split(" ")[1];
   if (!bearerToken) {
@@ -29,6 +30,10 @@ const authentication = (req, res, next) => {
       "You must be logged in to access the data.",
       null
     );
+  }
+  const checkBlacklistToken = await client.get(`blacklistToken:${token}`);
+  if (checkBlacklistToken) {
+    return responseHandler(res, 403, "Please sign in again", null);
   }
 
   return jwt.verify(token, process.env.JWT_PRIVATE_KEY, (error, payload) => {
