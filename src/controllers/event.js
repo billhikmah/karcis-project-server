@@ -1,5 +1,6 @@
 const eventModel = require("../models/event");
 const responseHandler = require("../utils/responseHandler");
+const { client } = require("../config/redis");
 
 const createEvent = async (req, res) => {
   try {
@@ -12,7 +13,7 @@ const createEvent = async (req, res) => {
       result.data
     );
   } catch (error) {
-    return responseHandler(res, error.status, error.error.message);
+    return responseHandler(res, error.status, error.error.message, null);
   }
 };
 
@@ -22,9 +23,14 @@ const getEventById = async (req, res) => {
     if (result.data.length === 0) {
       return responseHandler(res, 404, "Event not found.", result.data);
     }
+    client.setEx(
+      `getEvent:${req.params.id}`,
+      3600,
+      JSON.stringify(result.data)
+    );
     return responseHandler(res, result.status, result.statusText, result.data);
   } catch (error) {
-    return responseHandler(res, error.status, error.error.message);
+    return responseHandler(res, error.status, error.error.message, null);
   }
 };
 
@@ -42,6 +48,12 @@ const getAllEvents = async (req, res) => {
       totalPage: Math.ceil(result.count / req.query.limit),
     };
 
+    client.setEx(
+      `getEvents:${JSON.stringify(req.query)}`,
+      3600,
+      JSON.stringify({ result: result.data, pagination })
+    );
+
     return responseHandler(
       res,
       result.status,
@@ -50,7 +62,7 @@ const getAllEvents = async (req, res) => {
       pagination
     );
   } catch (error) {
-    return responseHandler(res, error.status, error.error.message);
+    return responseHandler(res, error.status, error.error.message, null);
   }
 };
 
@@ -68,7 +80,8 @@ const updateEvent = async (req, res) => {
     return responseHandler(
       res,
       error.status,
-      error.error.message || error.statusText
+      error.error.message || error.statusText,
+      null
     );
   }
 };
@@ -91,7 +104,7 @@ const deleteEvent = async (req, res) => {
       result.data
     );
   } catch (error) {
-    return responseHandler(res, error.status, error.error.message);
+    return responseHandler(res, error.status, error.error.message, null);
   }
 };
 
