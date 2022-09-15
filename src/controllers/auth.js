@@ -3,14 +3,14 @@ const jwt = require("jsonwebtoken");
 const authModel = require("../models/auth");
 const responseHandler = require("../utils/responseHandler");
 const { client } = require("../config/redis");
-// const { sendConfirmationEmail } = require("../config/nodemailer");
+const { sendConfirmationEmail } = require("../config/nodemailer");
 
 const signUp = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const hashPassword = await bcrypt.hash(password, 10);
     const result = await authModel.signUp(name, email, hashPassword);
-    // await sendConfirmationEmail(result.data.id, name, email);
+    await sendConfirmationEmail(result.data.id, name, email);
     const message =
       "Account has been created. Please check your email to activate your account.";
     const data = {
@@ -20,7 +20,7 @@ const signUp = async (req, res) => {
     };
     return responseHandler(res, result.status, message, data);
   } catch (error) {
-    return responseHandler(res, error.status, error.error.message);
+    return responseHandler(res, error.status, error.error.message || error);
   }
 };
 
