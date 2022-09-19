@@ -11,5 +11,10 @@ Router.post(
 );
 Router.post("/login", authController.logIn);
 Router.delete("/", authController.logOut);
+Router.post(
+  "/refresh",
+  authMiddleware.checkRefreshToken,
+  authController.refresh
+);
 
 module.exports = Router;
