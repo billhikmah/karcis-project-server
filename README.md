@@ -86,7 +86,7 @@ In addition to using the Express.js framework, this frontend is also supported b
 7. [multer](https://www.npmjs.com/package/multer)
 8. [eslint](https://www.npmjs.com/package/eslint)
 
-<h2>Appliaction Flow</h2>
+<h2>Application Flow</h2>
 <div style="display:flex; justify-content:center; margin-bottom:40px;">
     <img src="public/images/Application_Flow.png" width=400;>
 </div>
