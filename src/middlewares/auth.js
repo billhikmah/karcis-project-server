@@ -36,16 +36,20 @@ const authentication = async (req, res, next) => {
     return responseHandler(res, 403, "Please sign in again", null);
   }
 
-  return jwt.verify(token, process.env.JWT_PRIVATE_KEY, (error, payload) => {
-    if (error && error.name === "TokenExpiredError") {
-      return responseHandler(res, 401, "Please sign in again", null);
+  return jwt.verify(
+    token,
+    process.env.JWT_PRIVATE_ACCESS_KEY,
+    (error, payload) => {
+      if (error && error.name === "TokenExpiredError") {
+        return responseHandler(res, 401, "Please sign in again", null);
+      }
+      if (error) {
+        return responseHandler(res, 403, error.message, null);
+      }
+      req.payload = payload;
+      return next();
     }
-    if (error) {
-      return responseHandler(res, 403, error.message, null);
-    }
-    req.payload = payload;
-    return next();
-  });
+  );
 };
 
 const adminAuthorization = (req, res, next) => {
@@ -58,8 +62,42 @@ const adminAuthorization = (req, res, next) => {
   return next();
 };
 
+const checkRefreshToken = async (req, res, next) => {
+  const refreshToken = req.header("refresh-token");
+  if (!refreshToken) {
+    return responseHandler(
+      res,
+      403,
+      "You must be logged in to access the data.",
+      null
+    );
+  }
+  const checkBlacklistRefreshToken = await client.get(
+    `blacklistRefreshToken:${refreshToken}`
+  );
+  if (checkBlacklistRefreshToken) {
+    return responseHandler(res, 403, "Please sign in again", null);
+  }
+
+  return jwt.verify(
+    refreshToken,
+    process.env.JWT_PRIVATE_REFRESH_KEY,
+    (error, payload) => {
+      if (error && error.name === "TokenExpiredError") {
+        return responseHandler(res, 401, "Please sign in again", null);
+      }
+      if (error) {
+        return responseHandler(res, 403, error.message, null);
+      }
+      req.payload = payload;
+      return next();
+    }
+  );
+};
+
 module.exports = {
   checkRegisteredEmail,
   authentication,
   adminAuthorization,
+  checkRefreshToken,
 };
