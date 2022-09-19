@@ -45,14 +45,22 @@ const logIn = async (req, res) => {
       user_id: checkEmail.data[0].id,
       role: checkEmail.data[0].role,
     };
-    const token = jwt.sign(payload, process.env.JWT_PRIVATE_KEY, {
-      expiresIn: "1d",
+    const token = jwt.sign(payload, process.env.JWT_PRIVATE_ACCESS_KEY, {
+      expiresIn: "12h",
     });
+    const refreshToken = jwt.sign(
+      payload,
+      process.env.JWT_PRIVATE_REFRESH_KEY,
+      {
+        expiresIn: "1d",
+      }
+    );
 
     return responseHandler(res, 200, "Login success.", {
       user_id: checkEmail.data[0].id,
       role: checkEmail.data[0].role,
       token,
+      refreshToken,
     });
   } catch (error) {
     return responseHandler(res, error.status, error.error.message);
@@ -61,9 +69,17 @@ const logIn = async (req, res) => {
 
 const logOut = async (req, res) => {
   try {
-    const bearerToken = req.headers.authorization;
+    const { "refresh-token": refreshToken, authorization: bearerToken } =
+      req.headers;
     const token = bearerToken.split(" ")[1];
+
     client.setEx(`blacklistToken:${token}`, 3600 * 24, token);
+    client.setEx(
+      `blacklistRefreshToken:${refreshToken}`,
+      3600 * 24,
+      refreshToken
+    );
+
     return responseHandler(res, 200, "Logout success.", null);
   } catch (error) {
     return responseHandler(
@@ -75,4 +91,43 @@ const logOut = async (req, res) => {
   }
 };
 
-module.exports = { signUp, logIn, logOut };
+const refresh = async (req, res) => {
+  try {
+    const payload = {
+      user_id: req.payload.user_id,
+      role: req.payload.role,
+    };
+    const token = jwt.sign(payload, process.env.JWT_PRIVATE_ACCESS_KEY, {
+      expiresIn: "12h",
+    });
+    const refreshToken = jwt.sign(
+      payload,
+      process.env.JWT_PRIVATE_REFRESH_KEY,
+      {
+        expiresIn: "1d",
+      }
+    );
+
+    await client.setEx(
+      `blacklistRefreshToken:${req.header("refresh-token")}`,
+      3600 * 24,
+      req.header("refresh-token")
+    );
+
+    return responseHandler(res, 200, "Successfully refreshed the token.", {
+      user_id: req.payload.user_id,
+      role: req.payload.role,
+      token,
+      refreshToken,
+    });
+  } catch (error) {
+    return responseHandler(
+      res,
+      error.status || 500,
+      "Internal Server Error",
+      null
+    );
+  }
+};
+
+module.exports = { signUp, logIn, logOut, refresh };
