@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
@@ -7,8 +8,6 @@ const compression = require("compression");
 const bodyParser = require("body-parser");
 const mainRouter = require("./src/routes/index");
 const { redisConn } = require("./src/config/redis");
-
-require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT;
