@@ -17,7 +17,7 @@ const sendEmail = async (options) => {
     },
   });
   const html = await fs.readFileSync(
-    `./src/templates/${options.template}`,
+    `../templates/${options.template}`,
     "utf8"
   );
   const template = handlebars.compile(html);
