@@ -33,7 +33,7 @@ const signUp = async (req, res) => {
       greeting: "Hola, cómo estás?",
       subtitle: "Welcome!",
       message:
-        "You are successfully registered on Karcis, kindly click the button below to activate your acount.",
+        "You are successfully registered on Karcis, kindly click the button below to activate your acount. The link is available only for 10 minutes.",
       button: "ACTIVATE",
       submessage:
         "We are so glad you joined us, can't wait to explore the beauty of the world with you!",
@@ -258,7 +258,7 @@ const resendActivation = async (req, res) => {
       greeting: "Hola, cómo estás?",
       subtitle: "Welcome!",
       message:
-        "You are already registered on Karcis, kindly click the button below to activate your acount.",
+        "You are already registered on Karcis, kindly click the button below to activate your acount. The link is available only for 10 minutes.",
       button: "ACTIVATE",
       submessage:
         "We are so glad you joined us, can't wait to explore the beauty of the world with you!",
@@ -277,6 +277,56 @@ const resendActivation = async (req, res) => {
   }
 };
 
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const checkEmail = await authModel.getUserByEmail(email);
+    if (checkEmail.data.length === 0) {
+      return responseHandler(
+        res,
+        400,
+        "Sorry, the email is not registered yet.",
+        null
+      );
+    }
+
+    const arrayName = checkEmail.data[0].name.split(" ");
+    const nickName = arrayName[0][0].toUpperCase() + arrayName[0].substring(1);
+
+    const otp = random({
+      min: 100000,
+      max: 999999,
+      integer: true,
+    });
+    const hashOTP = await bcrypt.hash(otp.toString(), 10);
+    await client.setEx(`hashOTP:${checkEmail.data[0].id}`, 600, hashOTP);
+
+    const mailOptions = {
+      email,
+      name: nickName,
+      subject: `Karcis - Reset Password`,
+      template: "template-2.html",
+      url: `${process.env.CLIENT_URL}/api/auth/reset/${checkEmail.data[0].id}/${otp}`,
+      title: "RESET PASSWORD",
+      greeting: "Holaaa,",
+      subtitle: "Update Your Password!",
+      message:
+        "Someone sent a password reset request. Click on the button below if this was you. The link is available only for 10 minutes. Not you? Don't worry, just ignore this email.",
+      button: "Reset",
+      submessage: "Don't worry, your account is safe with us.",
+    };
+    await sendEmail(mailOptions);
+
+    const message = "Please check your email to reset your password.";
+    const data = {
+      email: checkEmail.data[0].email,
+    };
+    return responseHandler(res, checkEmail.status, message, data);
+  } catch (error) {
+    return responseHandler(res, error.status, error.error.message || error);
+  }
+};
+
 module.exports = {
   signUp,
   logIn,
@@ -284,4 +334,5 @@ module.exports = {
   refresh,
   activateAccount,
   resendActivation,
+  forgotPassword,
 };
