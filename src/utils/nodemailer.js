@@ -17,7 +17,7 @@ const sendEmail = async (options) => {
     },
   });
   const html = await fs.readFileSync(
-    `C:/Users/ASUS/Documents/karcis-project-server/src/templates/${options.template}`,
+    `./src/templates/${options.template}`,
     "utf8"
   );
   const template = handlebars.compile(html);
