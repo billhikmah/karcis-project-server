@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const random = require("simple-random-number-generator");
 const authModel = require("../models/auth");
+const userModel = require("../models/user");
 const responseHandler = require("../utils/responseHandler");
 const { client } = require("../config/redis");
 const { sendEmail } = require("../utils/nodemailer");
@@ -299,7 +300,7 @@ const forgotPassword = async (req, res) => {
       integer: true,
     });
     const hashOTP = await bcrypt.hash(otp.toString(), 10);
-    await client.setEx(`hashOTP:${checkEmail.data[0].id}`, 600, hashOTP);
+    await client.setEx(`reset-hashOTP:${checkEmail.data[0].id}`, 600, hashOTP);
 
     const mailOptions = {
       email,
@@ -327,6 +328,77 @@ const forgotPassword = async (req, res) => {
   }
 };
 
+const resetPassword = async (req, res) => {
+  try {
+    const { newPassword } = req.body;
+    const { id, otp } = req.params;
+    const hashOTP = await client.get(`reset-hashOTP:${id}`);
+
+    if (!hashOTP) {
+      return responseHandler(
+        res,
+        400,
+        "The link has expired, please make a new request.",
+        null
+      );
+    }
+
+    const checkOTP = await bcrypt.compare(otp.toString(), hashOTP);
+
+    if (!checkOTP) {
+      return responseHandler(
+        res,
+        400,
+        "You don't have access. Please resend the request.",
+        null
+      );
+    }
+
+    const newHashPassword = await bcrypt.hash(newPassword, 10);
+    const result = await userModel.updatePassword(newHashPassword, id);
+
+    const arrayName = result.data[0].name.split(" ");
+    const nickName = arrayName[0][0].toUpperCase() + arrayName[0].substring(1);
+
+    const mailOptions = {
+      email: result.data[0].email,
+      name: nickName,
+      subject: `Karcis - Your Password Has Been Reset`,
+      template: "template-2.html",
+      url: `${process.env.CLIENT_URL}`,
+      title: "Your Password Has Been Reset",
+      greeting: "Holaaa,",
+      subtitle: "It wasn't you?",
+      message:
+        "Your password has been reset. If it wasn't you, please click the button bellow.",
+      button: "It wasn't me",
+      submessage: "Don't worry, your account is safe with us.",
+    };
+    await sendEmail(mailOptions);
+
+    const data = {
+      id: result.data[0].id,
+      name: result.data[0].name,
+      updated_at: result.data[0].updated_at,
+    };
+
+    await client.del(`reset-hashOTP:${id}`);
+
+    return responseHandler(
+      res,
+      result.status,
+      "Password has been reset.",
+      data
+    );
+  } catch (error) {
+    return responseHandler(
+      res,
+      error.status,
+      error.error.message || error.statusText
+    );
+  }
+};
+
 module.exports = {
   signUp,
   logIn,
@@ -335,4 +407,5 @@ module.exports = {
   activateAccount,
   resendActivation,
   forgotPassword,
+  resetPassword,
 };
