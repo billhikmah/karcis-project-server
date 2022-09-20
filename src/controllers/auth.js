@@ -324,6 +324,7 @@ const forgotPassword = async (req, res) => {
     };
     return responseHandler(res, checkEmail.status, message, data);
   } catch (error) {
+    console.log(error);
     return responseHandler(res, error.status, error.error.message || error);
   }
 };
