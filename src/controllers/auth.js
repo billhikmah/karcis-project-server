@@ -18,8 +18,14 @@ const signUp = async (req, res) => {
       email,
       name: nickName,
       subject: `Karcis - Activate Your Account`,
-      template: "confirmation.html",
+      template: "template-1.html",
       url: "http://localhost:3001/api/auth/verif/123456",
+      title: "CONFIRMATION EMAIL",
+      greeting: "Hola, cómo estás?",
+      subtitle: "Welcome!",
+      message:
+        "You are successfully registered on Karcis, kindly click the button below to activate your acount.",
+      button: "ACTIVATE",
     };
     await sendConfirmationEmail(mailOptions);
 
