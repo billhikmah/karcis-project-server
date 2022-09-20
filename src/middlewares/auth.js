@@ -22,7 +22,6 @@ const checkRegisteredEmail = async (req, res, next) => {
 
 const authentication = async (req, res, next) => {
   const bearerToken = req.headers.authorization;
-  const token = bearerToken.split(" ")[1];
   if (!bearerToken) {
     return responseHandler(
       res,
@@ -31,6 +30,7 @@ const authentication = async (req, res, next) => {
       null
     );
   }
+  const token = bearerToken.split(" ")[1];
   const checkBlacklistToken = await client.get(`blacklistToken:${token}`);
   if (checkBlacklistToken) {
     return responseHandler(res, 403, "Please sign in again", null);
