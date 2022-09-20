@@ -216,4 +216,72 @@ const activateAccount = async (req, res) => {
   }
 };
 
-module.exports = { signUp, logIn, logOut, refresh, activateAccount };
+const resendActivation = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const checkEmail = await authModel.getUserByEmail(email);
+    if (checkEmail.data.length === 0) {
+      return responseHandler(
+        res,
+        400,
+        "Sorry, the email is not registered yet.",
+        null
+      );
+    }
+    if (checkEmail.data[0].activated_at) {
+      return responseHandler(
+        res,
+        400,
+        "Sorry, your account is already activated.",
+        null
+      );
+    }
+
+    const arrayName = checkEmail.data[0].name.split(" ");
+    const nickName = arrayName[0][0].toUpperCase() + arrayName[0].substring(1);
+
+    const otp = random({
+      min: 100000,
+      max: 999999,
+      integer: true,
+    });
+    const hashOTP = await bcrypt.hash(otp.toString(), 10);
+    await client.setEx(`hashOTP:${checkEmail.data[0].id}`, 600, hashOTP);
+
+    const mailOptions = {
+      email,
+      name: nickName,
+      subject: `Karcis - Activate Your Account`,
+      template: "template-1.html",
+      url: `${process.env.CLIENT_URL}/api/auth/activation/${checkEmail.data[0].id}/${otp}`,
+      title: "CONFIRMATION EMAIL",
+      greeting: "Hola, cómo estás?",
+      subtitle: "Welcome!",
+      message:
+        "You are already registered on Karcis, kindly click the button below to activate your acount.",
+      button: "ACTIVATE",
+      submessage:
+        "We are so glad you joined us, can't wait to explore the beauty of the world with you!",
+    };
+    await sendEmail(mailOptions);
+
+    const message =
+      "The new email confirmation has been sent. Please check your email to activate your account.";
+    const data = {
+      name: checkEmail.data[0].name,
+      email: checkEmail.data[0].email,
+    };
+    return responseHandler(res, checkEmail.status, message, data);
+  } catch (error) {
+    return responseHandler(res, error.status, error.error.message || error);
+  }
+};
+
+module.exports = {
+  signUp,
+  logIn,
+  logOut,
+  refresh,
+  activateAccount,
+  resendActivation,
+};
