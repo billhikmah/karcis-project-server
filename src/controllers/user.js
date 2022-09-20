@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/user");
-const authModel = require("../models/auth");
 const responseHandler = require("../utils/responseHandler");
+const { sendEmail } = require("../utils/nodemailer");
 
 const createUser = async (req, res) => {
   try {
@@ -65,10 +65,7 @@ const updateUser = async (req, res) => {
 const updatePassword = async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
-    const checkEmail = await userModel.getUserById(req.payload.user_id);
-    const getHashPassword = await authModel.getUserByEmail(
-      checkEmail.data[0].email
-    );
+    const getHashPassword = await userModel.getUserById(req.payload.user_id);
     const hashPassword = getHashPassword.data[0].password;
     const checkPassword = await bcrypt.compare(oldPassword, hashPassword);
     if (!checkPassword) {
@@ -79,6 +76,26 @@ const updatePassword = async (req, res) => {
       newHashPassword,
       req.payload.user_id
     );
+
+    const arrayName = getHashPassword.data[0].name.split(" ");
+    const nickName = arrayName[0][0].toUpperCase() + arrayName[0].substring(1);
+
+    const mailOptions = {
+      email: getHashPassword.data[0].email,
+      name: nickName,
+      subject: `Karcis - Your Password Has Been Changed`,
+      template: "template-2.html",
+      url: `${process.env.CLIENT_URL}`,
+      title: "Your Password Has Been Changed",
+      greeting: "Holaaaa,",
+      subtitle: "It wasn't you?",
+      message:
+        "Your password has been change. If it wasn't you, please click the button bellow.",
+      button: "It wasn't me",
+      submessage: "Don't worry, your account is safe with us.",
+    };
+    await sendEmail(mailOptions);
+
     const data = {
       id: result.data[0].id,
       name: result.data[0].name,
@@ -87,7 +104,7 @@ const updatePassword = async (req, res) => {
     return responseHandler(
       res,
       result.status,
-      "Password has been changed",
+      "Password has been changed.",
       data
     );
   } catch (error) {
