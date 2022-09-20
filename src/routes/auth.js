@@ -19,5 +19,6 @@ Router.post(
 Router.patch("/activation/:id/:otp", authController.activateAccount);
 Router.post("/resend", authController.resendActivation);
 Router.post("/forgot", authController.forgotPassword);
+Router.patch("/reset/:id/:otp", authController.resetPassword);
 
 module.exports = Router;
