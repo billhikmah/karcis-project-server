@@ -58,4 +58,26 @@ const getUserByEmail = (email) =>
       });
   });
 
-module.exports = { signUp, checkRegisteredEmail, logIn, getUserByEmail };
+const activateAccount = (id) =>
+  new Promise((resolve, reject) => {
+    const date = new Date();
+    supabase
+      .from("user")
+      .update({ activated_at: date, updated_at: date })
+      .match({ id })
+      .then((result) => {
+        if (!result.error) {
+          resolve(result);
+        } else {
+          reject(result);
+        }
+      });
+  });
+
+module.exports = {
+  signUp,
+  checkRegisteredEmail,
+  logIn,
+  getUserByEmail,
+  activateAccount,
+};
