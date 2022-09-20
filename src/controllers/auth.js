@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const random = require("simple-random-number-generator");
 const authModel = require("../models/auth");
 const responseHandler = require("../utils/responseHandler");
 const { client } = require("../config/redis");
@@ -14,18 +15,28 @@ const signUp = async (req, res) => {
     const arrayName = name.split(" ");
     const nickName = arrayName[0][0].toUpperCase() + arrayName[0].substring(1);
 
+    const otp = random({
+      min: 100000,
+      max: 999999,
+      integer: true,
+    });
+    const hashOTP = await bcrypt.hash(otp.toString(), 10);
+    await client.setEx(`hashOTP:${result.data[0].id}`, 600, hashOTP);
+
     const mailOptions = {
       email,
       name: nickName,
       subject: `Karcis - Activate Your Account`,
       template: "template-1.html",
-      url: "http://localhost:3001/api/auth/verif/123456",
+      url: `${process.env.CLIENT_URL}/api/auth/activation/${result.data[0].id}/${otp}`,
       title: "CONFIRMATION EMAIL",
       greeting: "Hola, cómo estás?",
       subtitle: "Welcome!",
       message:
         "You are successfully registered on Karcis, kindly click the button below to activate your acount.",
       button: "ACTIVATE",
+      submessage:
+        "We are so glad you joined us, can't wait to explore the beauty of the world with you!",
     };
     await sendConfirmationEmail(mailOptions);
 
@@ -147,4 +158,62 @@ const refresh = async (req, res) => {
   }
 };
 
-module.exports = { signUp, logIn, logOut, refresh };
+const activateAccount = async (req, res) => {
+  try {
+    const { otp, id } = req.params;
+    const hashOTP = await client.get(`hashOTP:${id}`);
+
+    if (!hashOTP) {
+      return responseHandler(
+        res,
+        400,
+        "Account activation failed, please resend the account activation request.",
+        null
+      );
+    }
+
+    const checkOTP = await bcrypt.compare(otp.toString(), hashOTP);
+
+    if (!checkOTP) {
+      return responseHandler(
+        res,
+        400,
+        "Account activation failed, please resend the account activation request.",
+        null
+      );
+    }
+
+    const result = await authModel.activateAccount(id);
+
+    const arrayName = result.data[0].name.split(" ");
+    const nickName = arrayName[0][0].toUpperCase() + arrayName[0].substring(1);
+
+    const mailOptions = {
+      email: result.data[0].email,
+      name: nickName,
+      subject: `Karcis - Account activation was successful.`,
+      template: "template-1.html",
+      url: `${process.env.CLIENT_URL}/api/ping`,
+      title: "CONGRATULATIONS",
+      greeting: "Are you ready?",
+      subtitle: "Welcome to The Karcis Family!",
+      message:
+        "Your account has been activated, purchase your first event to get an extra free ticket.",
+      button: "EXPLORE",
+      submessage:
+        "We are so glad you joined us, can't wait to explore the beauty of the world with you!",
+    };
+    await sendConfirmationEmail(mailOptions);
+
+    return responseHandler(
+      res,
+      200,
+      "Your account has been activated.",
+      result.data
+    );
+  } catch (error) {
+    return responseHandler(res, error.status, error.error.message);
+  }
+};
+
+module.exports = { signUp, logIn, logOut, refresh, activateAccount };
