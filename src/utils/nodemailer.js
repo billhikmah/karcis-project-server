@@ -23,7 +23,7 @@ const sendConfirmationEmail = async (options) => {
   const template = handlebars.compile(html);
 
   const mailOptions = {
-    from: process.env.MAIL_SENDER,
+    from: '"Karcis" <admin.karcisproject@gmail.com>',
     to: options.email,
     subject: options.subject,
     html: template(options),
