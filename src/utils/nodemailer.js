@@ -4,7 +4,7 @@ const fs = require("fs");
 const accessToken = require("../config/gmail");
 require("dotenv").config();
 
-const sendConfirmationEmail = async (options) => {
+const sendEmail = async (options) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -32,4 +32,4 @@ const sendConfirmationEmail = async (options) => {
   await transporter.sendMail(mailOptions);
 };
 
-module.exports = { sendConfirmationEmail };
+module.exports = { sendEmail };
