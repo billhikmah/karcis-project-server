@@ -47,7 +47,7 @@ const getUserByEmail = (email) =>
   new Promise((resolve, reject) => {
     supabase
       .from("user")
-      .select("password, id, role")
+      .select("*")
       .eq("email", email)
       .then((result) => {
         if (!result.error) {
