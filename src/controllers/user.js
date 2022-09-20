@@ -87,7 +87,7 @@ const updatePassword = async (req, res) => {
       template: "template-2.html",
       url: `${process.env.CLIENT_URL}`,
       title: "Your Password Has Been Changed",
-      greeting: "Holaaaa,",
+      greeting: "Holaaa,",
       subtitle: "It wasn't you?",
       message:
         "Your password has been change. If it wasn't you, please click the button bellow.",
