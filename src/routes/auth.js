@@ -16,5 +16,6 @@ Router.post(
   authMiddleware.checkRefreshToken,
   authController.refresh
 );
+Router.patch("/activation/:id/:otp", authController.activateAccount);
 
 module.exports = Router;
