@@ -4,7 +4,7 @@ const random = require("simple-random-number-generator");
 const authModel = require("../models/auth");
 const responseHandler = require("../utils/responseHandler");
 const { client } = require("../config/redis");
-const { sendConfirmationEmail } = require("../utils/nodemailer");
+const { sendEmail } = require("../utils/nodemailer");
 
 const signUp = async (req, res) => {
   try {
@@ -38,7 +38,7 @@ const signUp = async (req, res) => {
       submessage:
         "We are so glad you joined us, can't wait to explore the beauty of the world with you!",
     };
-    await sendConfirmationEmail(mailOptions);
+    await sendEmail(mailOptions);
 
     const message =
       "Account has been created. Please check your email to activate your account.";
@@ -203,7 +203,7 @@ const activateAccount = async (req, res) => {
       submessage:
         "We are so glad you joined us, can't wait to explore the beauty of the world with you!",
     };
-    await sendConfirmationEmail(mailOptions);
+    await sendEmail(mailOptions);
 
     return responseHandler(
       res,
