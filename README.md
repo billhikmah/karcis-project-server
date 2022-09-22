@@ -102,7 +102,3 @@ In addition to using the Express.js framework, this frontend is also supported b
 
 1. Postman<br>
    The API has been documented with on [Postman](https://documenter.getpostman.com/view/20723287/VV51tET9).
-
-```
-
-```
