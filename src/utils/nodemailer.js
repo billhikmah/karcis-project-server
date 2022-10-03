@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 const handlebars = require("handlebars");
 const fs = require("fs");
+const { promisify } = require("util");
 const accessToken = require("../config/gmail");
 require("dotenv").config();
 
@@ -16,10 +17,9 @@ const sendEmail = async (options) => {
       accessToken,
     },
   });
-  const html = await fs.readFileSync(
-    `./src/templates/${options.template}`,
-    "utf8"
-  );
+
+  const readFile = promisify(fs.readFile);
+  const html = await readFile(`./src/templates/${options.template}`, "utf8");
   const template = handlebars.compile(html);
 
   const mailOptions = {
