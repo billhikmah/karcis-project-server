@@ -15,7 +15,7 @@ Router.get(
   wishlistController.getAllWishList
 );
 Router.get(
-  "/:id",
+  "/:event_id",
   authMiddleware.authentication,
   wishlistController.getWishlistById
 );

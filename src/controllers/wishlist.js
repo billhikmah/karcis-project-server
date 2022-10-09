@@ -41,7 +41,7 @@ const getAllWishList = async (req, res) => {
 
 const getWishlistById = async (req, res) => {
   try {
-    const result = await wishlistModel.getWishlistById(req.params);
+    const result = await wishlistModel.getWishlistById(req.params, req.payload);
     if (result.data.length === 0) {
       return responseHandler(res, 404, "Data not found.", result.data);
     }

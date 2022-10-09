@@ -51,12 +51,13 @@ const getAllWishList = (query, { user_id }) =>
       });
   });
 
-const getWishlistById = ({ id }) =>
+const getWishlistById = (params, payload) =>
   new Promise((resolve, reject) => {
     supabase
       .from("wishlist")
       .select(`*, user_id(id, name), event_id(id, name)`)
-      .eq("id", id)
+      .eq("user_id", payload.user_id)
+      .eq("event_id", params.event_id)
       .then((result) => {
         if (!result.error) {
           resolve(result);
