@@ -12,7 +12,8 @@ const { redisConn } = require("./src/config/redis");
 const app = express();
 const port = process.env.PORT;
 const corsOptions = {
-  origin: [`http://localhost:${port}`],
+  origin: [`http://localhost:3000`, `https://karcis.netlify.app`],
+  // origin: "*",
   methods: ["GET", "POST", "PATCH", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization", "x-access-token"],
 };
