@@ -48,6 +48,7 @@ const getAllEvents = (data) =>
       page = 1,
       limit = 5,
       key,
+      location,
       sort = "name",
       order = "true",
       date,
@@ -60,6 +61,11 @@ const getAllEvents = (data) =>
     // Filter by name
     if (key) {
       query = query.ilike(`"name"`, `%${key}%`);
+    }
+
+    // Filter by Location
+    if (location) {
+      query = query.eq("location", `${location}`);
     }
 
     // Only shows upcoming event
