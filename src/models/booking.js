@@ -52,7 +52,9 @@ const getBookingByUserId = (user_id) =>
   new Promise((resolve, reject) => {
     supabase
       .from("booking")
-      .select(`*, booking_section(*), user_id(id, name), event_id(id, name)`)
+      .select(
+        `*, booking_section(*), user_id(id, name), event_id(id, name, date_time_show, location(id, name))`
+      )
       .match({ user_id })
       .then((result) => {
         if (!result.error) {
