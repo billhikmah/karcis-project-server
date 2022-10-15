@@ -15,7 +15,12 @@ const corsOptions = {
   origin: [`http://localhost:3000`, `https://karcis.netlify.app`],
   // origin: "*",
   methods: ["GET", "POST", "PATCH", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization", "x-access-token"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "x-access-token",
+    "refreshtoken",
+  ],
 };
 
 redisConn();
