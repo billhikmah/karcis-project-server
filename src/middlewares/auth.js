@@ -41,7 +41,12 @@ const authentication = async (req, res, next) => {
     process.env.JWT_PRIVATE_ACCESS_KEY,
     (error, payload) => {
       if (error && error.name === "TokenExpiredError") {
-        return responseHandler(res, 401, "Please sign in again", null);
+        return responseHandler(
+          res,
+          403,
+          "Please sign in again, your token is expired",
+          null
+        );
       }
       if (error) {
         return responseHandler(res, 403, error.message, null);
@@ -63,7 +68,7 @@ const adminAuthorization = (req, res, next) => {
 };
 
 const checkRefreshToken = async (req, res, next) => {
-  const refreshToken = req.header("refresh-token");
+  const refreshToken = req.header("refreshtoken");
   if (!refreshToken) {
     return responseHandler(
       res,
@@ -84,7 +89,7 @@ const checkRefreshToken = async (req, res, next) => {
     process.env.JWT_PRIVATE_REFRESH_KEY,
     (error, payload) => {
       if (error && error.name === "TokenExpiredError") {
-        return responseHandler(res, 401, "Please sign in again", null);
+        return responseHandler(res, 403, "You need to sign in again", null);
       }
       if (error) {
         return responseHandler(res, 403, error.message, null);
