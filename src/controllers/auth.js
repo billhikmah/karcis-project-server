@@ -98,7 +98,7 @@ const logIn = async (req, res) => {
 
 const logOut = async (req, res) => {
   try {
-    const { "refresh-token": refreshToken, authorization: bearerToken } =
+    const { refreshtoken: refreshToken, authorization: bearerToken } =
       req.headers;
     const token = bearerToken.split(" ")[1];
 
@@ -138,9 +138,9 @@ const refresh = async (req, res) => {
     );
 
     await client.setEx(
-      `blacklistRefreshToken:${req.header("refresh-token")}`,
+      `blacklistRefreshToken:${req.header("refreshtoken")}`,
       3600 * 24,
-      req.header("refresh-token")
+      req.header("refreshtoken")
     );
 
     return responseHandler(res, 200, "Successfully refreshed the token.", {
