@@ -21,6 +21,7 @@ const createUser = (body) =>
       date_of_birth,
       email,
       password,
+      phone,
     } = body;
     supabase
       .from("user")
@@ -34,6 +35,7 @@ const createUser = (body) =>
           date_of_birth,
           email,
           password,
+          phone,
         },
       ])
       .then((result) => {
@@ -50,9 +52,12 @@ const getAllUser = (query) =>
     const { from, to } = pagination(query.page, query.limit);
     supabase
       .from("user")
-      .select(`*, gender(name), profession(name), nationality(name)`, {
-        count: "exact",
-      })
+      .select(
+        `*, gender(name, id), profession(name, id), nationality(name, id)`,
+        {
+          count: "exact",
+        }
+      )
       .order("name", { ascending: true })
       .range(from, to)
       .then((result) => {
@@ -68,7 +73,9 @@ const getUserById = (id) =>
   new Promise((resolve, reject) => {
     supabase
       .from("user")
-      .select(`*, gender(name), profession(name), nationality(name)`)
+      .select(
+        `*, gender(name, id), profession(name, id), nationality(name, id)`
+      )
       .eq("id", id)
       .then((result) => {
         if (!result.error) {
@@ -81,8 +88,15 @@ const getUserById = (id) =>
 
 const updateUser = (body, payload, image) =>
   new Promise((resolve, reject) => {
-    const { name, username, gender, profession, nationality, date_of_birth } =
-      body;
+    const {
+      name,
+      username,
+      gender,
+      profession,
+      nationality,
+      date_of_birth,
+      phone,
+    } = body;
     const { user_id: id } = payload;
     const updated_at = new Date();
     supabase
@@ -97,6 +111,7 @@ const updateUser = (body, payload, image) =>
           date_of_birth,
           updated_at,
           image,
+          phone,
         },
       ])
       .match({ id })
